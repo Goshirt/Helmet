@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.helmet.dao.BlogDao">
+	<resultMap type="Blog" id="BlogResult">
+		<result property="blogId" column="blogId"/>
+		<result property="title" column="title"/>
+		<result property="summary" column="summary"/>
+		<result property="releaseDate" column="releaseDate"/>
+		<result property="clickNum" column="clickNum"/>
+		<result property="replyNum" column="replyNum"/>
+		<result property="content" column="content"/>
+		<result property="typeId" column="typeId"/>
+		<result property="keyWord" column="keyWord"/>
+		<association property="blogType" column="typeId" select="com.helmet.dao.BlogTypeDao.findById"></association>
+	</resultMap>
+	
+	<select id="getList" resultMap="BlogResult">
+		SELECT DATE_FORMAT(releaseDate,'%Y年%m月') AS releaseDateStr,COUNT(*) AS blogCount FROM t_blog  
+		GROUP BY DATE_FORMAT(releaseDate,'%Y年%m月') ORDER BY DATE_FORMAT(releaseDate,'%Y年%m月') DESC
+	</select>
+	
+	<select id="blogList" parameterType="Map" resultMap="BlogResult">
+		select * from t_blog 
+		<where>
+			<if test="typeId!=null and typeId!=''">
+				and typeId=#{typeId}
+			</if>
+			<if test="releaseDateStr!=null and releaseDateStr!=''">
+				and DATE_FORMAT(releaseDate,'%Y年%m月')=#{releaseDateStr}
+			</if>
+		</where>
+		order by releaseDate desc
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if> 
+	</select>
+	
+	<select id="count" parameterType="Map" resultType="Long">
+		select count(*) from t_blog
+		<where>
+			<if test="typeId!=null and typeId!=''">
+				and typeId=#{typeId}
+			</if>
+			<if test="releaseDateStr!=null and releaseDateStr!=''">
+				and DATE_FORMAT(releaseDate,'%Y年%m月')=#{releaseDateStr}
+			</if>
+		</where>
+	</select>
+	
+	<select id="getBlogById" parameterType="Integer" resultMap="BlogResult">
+		select * from t_blog where blogId=#{blogId}
+	</select>
+	
+	<update id="updateBlog" parameterType="Blog">
+		update t_blog
+		<set>
+			<if test="clickNum!=null">
+				clickNum=#{clickNum},
+			</if>
+		</set>
+	</update>
+	
+	<select id="getPreviousBlog" parameterType="Integer" resultMap="BlogResult">
+		SELECT * FROM t_blog WHERE blogId&lt;#{blogId} ORDER BY blogId DESC LIMIT 1
+	</select>
+	
+	<select id="getNextBlog" parameterType="Integer" resultMap="BlogResult">
+		SELECT * FROM t_blog WHERE blogId&gt;#{blogId} ORDER BY blogId ASC LIMIT 1
+	</select>
+	<!--  useGeneratedKeys="true" keyProperty="blogId" 会返回在数据库中自增的主键，并自动封装到实体中的blogId中 -->
+	<insert id="addBlog"  useGeneratedKeys="true" keyProperty="blogId" parameterType="Blog" >
+		insert into t_blog values(null,#{title},#{summary},now(),0,0,#{content},#{typeId},#{keyWord})
+	</insert>
+</mapper> 
