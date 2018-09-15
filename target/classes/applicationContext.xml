@@ -38,7 +38,7 @@
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
 	</bean>
 
-	<!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->
+	<!-- (事务管理器)transaction manager, 这是使用JDBC或者MyBatis的事务管理器，Hibernate以及JPA有另外的事务管理器 -->
 	<bean id="transactionManager"
 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
 		<property name="dataSource" ref="dataSource" />
@@ -76,10 +76,11 @@
   	  <property name="securityManager" ref="securityManager"/>  
     </bean>  
   
-	<!-- 配置事务通知属性 -->  
+	<!--tx:advice 事务增强          transaction-manager:事务管理器-->  
     <tx:advice id="txAdvice" transaction-manager="transactionManager">  
         <!-- 定义事务传播属性 -->  
         <tx:attributes>  
+        	<!--事务属性管理的方法    name: 方法名     propagation: 事务传播行为     read-only:事务是否只读-->
             <tx:method name="insert*" propagation="REQUIRED" />  
             <tx:method name="update*" propagation="REQUIRED" />  
             <tx:method name="edit*" propagation="REQUIRED" />  
@@ -102,6 +103,7 @@
     <aop:config>  
         <aop:pointcut id="serviceOperation"  
             expression="execution(* com.helmet.service.*.*(..))" />  
+            <!--aop:advisor 应用事务增强， advice-ref:引用的增强       pointcut-ref:应用的地方-->
         <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation" />  
     </aop:config>  
     

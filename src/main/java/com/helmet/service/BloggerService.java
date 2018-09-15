@@ -10,7 +10,23 @@ import com.helmet.entity.Blogger;
  */
 public interface BloggerService {
 	
+	/**
+	 * 通过博主名获取博主信息
+	 * @param bloggerName
+	 * @return
+	 */
 	public Blogger getBloggerByName(String bloggerName);
 	
-	public Blogger getBlog();
+	/**
+	 * 获取博主信息
+	 * @return
+	 */
+	public Blogger getBlogger();
+	
+	/**
+	 * 更新博主信息
+	 * @param blogger
+	 * @return
+	 */
+	public Integer updateBlogger(Blogger blogger);
 }

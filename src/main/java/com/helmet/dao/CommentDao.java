@@ -19,5 +19,29 @@ public interface CommentDao {
 	  * @param comment
 	  * @return
 	  */
-	 public int saveComment(Comment comment);
+	 public Integer saveComment(Comment comment);
+	 
+	 
+	 /**
+	  * 获取指定博客评论的数量
+	  * @param map
+	  * @return
+	  */
+	 public Long countComment(Map<String, Object> map);
+	 
+	 
+	 /**
+	  * 删除评论
+	  * @param deleteIds
+	  * @return
+	  */
+	 public Integer deleteComment(String deleteId);
+	 
+	 
+	 /**
+	  * 更新评论信息
+	  * @param comment
+	  * @return
+	  */
+	 public Integer updateComment(Comment comment);
 }

@@ -87,7 +87,7 @@ public class BlogController {
 	 */
 	@RequestMapping("/search")
 	public ModelAndView search(@RequestParam(value="searchField",required=false)String searchField,@RequestParam(value="page",required=false)String page,HttpServletRequest request)throws Exception {
-		String pageSize="2";
+		String pageSize="8";
 		if (StringUtil.isEmpty(page)) {
 			page="1";
 		}

@@ -20,4 +20,16 @@ public class LinkServiceImpl implements LinkService{
 		return linkDao.getLinkList();
 	}
 
+	public Integer insert(Link link) {
+		return linkDao.insert(link);
+	}
+
+	public Integer update(Link link) {
+		return linkDao.update(link);
+	}
+
+	public Integer delete(String linkId) {
+		return linkDao.delete(linkId);
+	}
+
 }

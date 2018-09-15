@@ -2,7 +2,6 @@ package com.helmet.realm;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.lang.ObjectUtils.Null;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;

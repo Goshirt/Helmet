@@ -28,4 +28,12 @@ public class BloggerServiceImpl implements BloggerService{
 		return bloggerDao.getBlogger();
 	}
 
+	public Blogger getBlogger() {
+		return bloggerDao.getBlogger();
+	}
+
+	public Integer updateBlogger(Blogger blogger) {
+		return bloggerDao.updateBlogger(blogger);
+	}
+
 }

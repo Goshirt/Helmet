@@ -15,4 +15,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select * from t_link order by orderNum desc
 	</select>
 	
+	<insert id="insert" parameterType="Link">
+		insert into t_link values(null,#{linkName},#{linkUrl},#{orderNum})
+	</insert>
+	
+	<update id="update" parameterType="Link">
+		update t_link
+		<set>
+			<if test="linkName!=null and linkName!=''">
+				linkName=#{linkName},
+			</if>
+			<if test="linkUrl!=null and linkUrl!=''">
+				linkUrl=#{linkUrl},
+			</if>
+			<if test="orderNum!=null and orderNum!=''">
+				orderNum=#{orderNum},
+			</if>
+		</set>
+		<where>
+			linkId=#{linkId}
+		</where>
+	</update>
+	
+	<delete id="delete" parameterType="String">
+		delete from t_link where linkId=#{linkId}
+	</delete>
 </mapper> 

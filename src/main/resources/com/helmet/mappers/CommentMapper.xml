@@ -12,7 +12,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<association property="blog" column="blogId" select="com.helmet.dao.BlogDao.getBlogById"></association>
 	</resultMap>
 	
-	<select id="getComments" resultMap="CommentResult">
+	<select id="getComments" parameterType="Map" resultMap="CommentResult">
 		select * from t_comment
 		<where>
 			<if test="blogId!=null">
@@ -23,8 +23,40 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			</if>
 		</where>
 		order by commentDate
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
 	</select>
-	<insert id="saveComment" parameterType="Comment">
+	
+	<select id="countComment" parameterType="Map" resultType="Long">
+		select count(*) from t_comment
+		<where>
+			<if test="blogId!=null">
+				and blogId=#{blogId}
+			</if>
+			<if test="state!=null">
+				and state=#{state}
+			</if>
+		</where>
+		
+	</select>
+	
+	<insert id="saveComment" parameterType="Comment" >
 		insert into t_comment values(null,#{blog.blogId},#{userIP},#{content},0,now())
 	</insert>
+	
+	<delete id="deleteComment" parameterType="String" >
+		delete from t_comment where commentId=#{deleteId}
+	</delete>
+	<update id="updateComment" parameterType="Comment">
+		update t_comment 
+		<set>
+			<if test="state!=null">
+				state=#{state},
+			</if>
+		</set>
+		<where>
+			commentId=#{commentId}
+		</where>
+	</update>
 </mapper> 

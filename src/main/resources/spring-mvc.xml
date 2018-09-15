@@ -36,6 +36,6 @@
 
 	</bean>
 
-	<!-- 使用注解的包，包括子集 -->
+	<!-- 使用注解的包，包括子集   自动扫描指定的包下的所有类，被注解@Controller 注解的类就可以成为一个能处理HTTP请求的控制器-->
 	<context:component-scan base-package="com.helmet.controller" />
 </beans>  

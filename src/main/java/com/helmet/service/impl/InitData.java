@@ -32,7 +32,8 @@ public class InitData implements ServletContextListener,ApplicationContextAware{
 	public void contextInitialized(ServletContextEvent sce) {
 		ServletContext application=sce.getServletContext();
 		BloggerService bloggerService=(BloggerService) applicationContext.getBean(BloggerService.class);
-		Blogger blogger=bloggerService.getBlog();
+		Blogger blogger=bloggerService.getBlogger();
+		//密码比较敏感，清空
 		blogger.setPassword(null);
 		application.setAttribute("blogger", blogger);
 		

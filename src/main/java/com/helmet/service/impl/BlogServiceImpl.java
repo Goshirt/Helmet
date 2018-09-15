@@ -35,8 +35,8 @@ public class BlogServiceImpl implements BlogService{
 		return blogDao.getBlogById(blogId);
 	}
 
-	public void updateBlog(Blog blog) {
-		blogDao.updateBlog(blog);
+	public Integer updateBlog(Blog blog) {
+		return blogDao.updateBlog(blog);
 	}
 
 	public Blog getPreviousBlog(Integer blogId) {
@@ -49,6 +49,14 @@ public class BlogServiceImpl implements BlogService{
 
 	public Integer addBlog(Blog blog) {
 		return blogDao.addBlog(blog);
+	}
+
+	public Integer deleteBlog(Integer blogId) {
+		return blogDao.deleteBlog(blogId);
+	}
+
+	public Integer haveBlog(Integer typeId) {
+		return blogDao.haveBlog(typeId);
 	}
 
 }

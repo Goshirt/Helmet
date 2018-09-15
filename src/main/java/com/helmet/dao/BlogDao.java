@@ -33,7 +33,7 @@ public interface BlogDao {
 	 * 更新博客内容
 	 * @param blog
 	 */
-	public void updateBlog(Blog blog);
+	public Integer updateBlog(Blog blog);
 	
 	/**
 	 * 获取上一篇博客
@@ -55,4 +55,19 @@ public interface BlogDao {
 	 * @return
 	 */
 	public Integer addBlog(Blog blog);
+	
+	
+	/**
+	 * 删除博客
+	 * @param blogId
+	 * @return
+	 */
+	public Integer deleteBlog(Integer blogId);
+	
+	/**
+	 * 判断指定类型下的博客数
+	 * @param typeId
+	 * @return
+	 */
+	public Integer haveBlog(Integer typeId);
 }

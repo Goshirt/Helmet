@@ -22,8 +22,21 @@ public class CommentServiceImpl implements CommentService{
 		return commentDao.getComments(map);
 	}
 
-	public int saveComment(Comment comment) {
+	public Integer saveComment(Comment comment) {
 		return commentDao.saveComment(comment);
+	}
+
+	public Long countComment(Map<String, Object> map) {
+		return commentDao.countComment(map);
+	}
+
+	public Integer deleteComment(String deleteId) {
+		return commentDao.deleteComment(deleteId);
+	}
+
+
+	public Integer updateComment(Comment comment) {
+		return commentDao.updateComment(comment);
 	}
 
 }

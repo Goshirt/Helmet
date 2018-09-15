@@ -24,6 +24,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="blogList" parameterType="Map" resultMap="BlogResult">
 		select * from t_blog 
 		<where>
+			<if test="title!=null and title!=''">
+				and title like #{title}
+			</if>
 			<if test="typeId!=null and typeId!=''">
 				and typeId=#{typeId}
 			</if>
@@ -40,6 +43,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="count" parameterType="Map" resultType="Long">
 		select count(*) from t_blog
 		<where>
+			<if test="title!=null and title!=''">
+				and title like #{title}
+			</if>
 			<if test="typeId!=null and typeId!=''">
 				and typeId=#{typeId}
 			</if>
@@ -56,10 +62,29 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<update id="updateBlog" parameterType="Blog">
 		update t_blog
 		<set>
+			<if test="title!=null and title!=''">
+			title=#{title},
+			</if>
+			<if test="summary!=null and summary!=''">
+			summary=#{summary},
+			</if>
+			<if test="content!=null and content!=''">
+			content=#{content},
+			</if>
+			<if test="replyNum!=null">
+			replyNum=#{replyNum},
+			</if>
+			<if test="blogType.typeId!=null">
+			typeId=#{blogType.typeId},
+			</if>
 			<if test="clickNum!=null">
-				clickNum=#{clickNum},
+			clickNum=#{clickNum},
+			</if>
+			<if test="keyWord!=null and keyWord!=''">
+			keyWord=#{keyWord},
 			</if>
 		</set>
+		where blogId=#{blogId}
 	</update>
 	
 	<select id="getPreviousBlog" parameterType="Integer" resultMap="BlogResult">
@@ -71,6 +96,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	<!--  useGeneratedKeys="true" keyProperty="blogId" 会返回在数据库中自增的主键，并自动封装到实体中的blogId中 -->
 	<insert id="addBlog"  useGeneratedKeys="true" keyProperty="blogId" parameterType="Blog" >
-		insert into t_blog values(null,#{title},#{summary},now(),0,0,#{content},#{typeId},#{keyWord})
+		insert into t_blog values(null,#{title},#{summary},now(),0,0,#{content},#{blogType.typeId},#{keyWord})
 	</insert>
+	
+	<delete id="deleteBlog"  parameterType="Integer">
+		delete from t_blog where blogId=#{blogId}
+	</delete>
+	
+	<select id="haveBlog" resultType="Integer">
+		select count(blogId) total from t_blog
+		<where>
+			typeId=#{typeId}
+		</where>
+	</select>
 </mapper> 

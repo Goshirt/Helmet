@@ -12,10 +12,12 @@ import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
@@ -53,8 +55,8 @@ public class BlogIndex {
 	 * @throws Exception
 	 */
 	private IndexWriter getIndexWriter()throws Exception {
-		//初始化路径
-		directory=FSDirectory.open(Paths.get("H:\\VIP\\lucene"));
+		//初始化路径   部署到服务器的地址，在本地时需要更改
+		directory=FSDirectory.open(Paths.get("/home/lucene"));
 		//中文分析器
 		SmartChineseAnalyzer analyzer=new SmartChineseAnalyzer();
 		//配置类
@@ -75,15 +77,22 @@ public class BlogIndex {
 		//StringField定义的字段不会被分词器解析
 		document.add(new StringField("blogId", String.valueOf(blog.getBlogId()), Field.Store.YES));
 		document.add(new StringField("releaseDate", DateUtil.formateDateToString(new Date(), "yyyy-MM-dd"), Field.Store.YES));
-		document.add(new org.apache.lucene.document.TextField("title", blog.getTitle(), Field.Store.YES));
-		document.add(new org.apache.lucene.document.TextField("content", blog.getContentNoTag(), Field.Store.YES));
+		document.add(new TextField("title", blog.getTitle(), Field.Store.YES));
+		document.add(new TextField("content", blog.getContentNoTag(), Field.Store.YES));
 		//输出索引文件到indexWriter指定的目录下
 		indexWriter.addDocument(document);
 		indexWriter.close();
 	}
 	
-		public List<Blog> serachBlog(String serachField)throws Exception{
-			directory=FSDirectory.open(Paths.get("H:\\VIP\\lucene"));
+	/**
+	 * 使用lucene进行查询，获取相应的博客列表
+	 * @param serachField
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Blog> serachBlog(String serachField)throws Exception{
+			//部署到服务器的地址，在服务器时需要更改/home/lucene  本地H:\\VIP\\lucene
+			directory=FSDirectory.open(Paths.get("/home/lucene"));
 			//从保存索引的目录获得一个索引读取器
 			IndexReader indexReader=DirectoryReader.open(directory);
 			//获取一个可以进行多查询的查询器，如本项目的需求，title and content
@@ -146,15 +155,15 @@ public class BlogIndex {
 					TokenStream tokenStream=chineseAnalyzer.tokenStream("content", new StringReader(content));
 					//获得高亮的title
 					String highlighterContent=highlighter.getBestFragment(tokenStream, content);
-					if (StringUtil.isNotEmpty(highlighterContent)) {
+					if (StringUtil.isEmpty(highlighterContent)) {
 						//如果content过长，进行截取，便于页面展示
-						if (highlighterContent.length()<=200) {
-							blog.setContent(highlighterContent);
+						if (content.length()<=200) {
+							blog.setContent(content);
 						}else {
-							blog.setContent(highlighterContent.substring(0, 200));
+							blog.setContent(content.substring(0, 200));
 						}
 					}else {
-						blog.setContent(content);
+						blog.setContent(highlighterContent);
 					}
 				}
 				//添加blog到集合
@@ -163,6 +172,35 @@ public class BlogIndex {
 			}
 			return blogs;
 		}
-		
 	
+	/**
+	 * 删除博客的索引
+	 * @param blogId
+	 * @throws Exception
+	 */
+	public void deleteIndex(String blogId)throws Exception {
+		IndexWriter writer=getIndexWriter();
+		writer.deleteDocuments(new Term("blogId",blogId));
+		//强制删除
+		writer.forceMergeDeletes();
+		//提交
+		writer.commit();
+		writer.close();
+	}
+	
+	/**
+	 * 更新索引
+	 * @param blog
+	 * @throws Exception
+	 */
+	public void updateIndex(Blog blog)throws Exception {
+		IndexWriter writer=getIndexWriter();
+		Document document=new Document();
+		document.add(new StringField("blogId", String.valueOf(blog.getBlogId()), Field.Store.YES));
+		document.add(new TextField("title", blog.getTitle(), Field.Store.YES));
+		document.add(new TextField("content", blog.getContent(), Field.Store.YES));
+		document.add(new StringField("releaseDate", DateUtil.formateDateToString(new Date(), "yyyy-MM-dd"), Field.Store.YES));
+		writer.updateDocument(new Term("blogId", String.valueOf(blog.getBlogId())), document);
+		writer.close();
+	}
 }
